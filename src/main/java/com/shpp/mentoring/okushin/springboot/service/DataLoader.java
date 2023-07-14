@@ -1,7 +1,9 @@
 package com.shpp.mentoring.okushin.springboot.service;
 
+import com.shpp.mentoring.okushin.springboot.converter.PersonConverter;
 import com.shpp.mentoring.okushin.springboot.exceptions.EntityNotFoundException;
 import com.shpp.mentoring.okushin.springboot.exceptions.NotValidIpnException;
+import com.shpp.mentoring.okushin.springboot.model.PersonDTO;
 import com.shpp.mentoring.okushin.springboot.model.PersonEntity;
 import com.shpp.mentoring.okushin.springboot.repository.PersonRepository;
 import org.springframework.http.HttpStatus;
@@ -16,10 +18,12 @@ import java.util.Optional;
 public class DataLoader {
     private final PersonRepository personRepository;
     private final IpnValidator validator;
+    private final PersonConverter customerConverter;
 
-    public DataLoader(PersonRepository personRepository, IpnValidator validator) {
+    public DataLoader(PersonRepository personRepository, IpnValidator validator, PersonConverter customerConverter) {
         this.personRepository = personRepository;
         this.validator = validator;
+        this.customerConverter = customerConverter;
     }
 
     public Iterable<PersonEntity> getUsers() {
@@ -37,18 +41,22 @@ public class DataLoader {
         return personRepository.findById(ipn);
     }
 
-    public PersonEntity postUser(@RequestBody PersonEntity person) {
-        String ipn = person.getIpn();
+    public PersonDTO postUser(@RequestBody PersonDTO personDTO) {
+        String ipn = personDTO.getIpn();
         if (validator.isValidIpn(ipn)) {
-            return personRepository.save(person);
+            PersonEntity person = customerConverter.convertDtoToEntity(personDTO);
+            person = personRepository.save(person);
+            return customerConverter.convertEntityToDto(person);
         }
         throw new NotValidIpnException(ipn);
 
     }
 
     public ResponseEntity<PersonEntity> putUser(String ipn,
-                                                PersonEntity person) {
+                                                PersonDTO personDTO) {
         if (validator.isValidIpn(ipn)) {
+            PersonEntity person = customerConverter.convertDtoToEntity(personDTO);
+            person = personRepository.save(person);
             return (personRepository.existsById(ipn))
                     ? new ResponseEntity<>(personRepository.save(person),
                     HttpStatus.OK)
