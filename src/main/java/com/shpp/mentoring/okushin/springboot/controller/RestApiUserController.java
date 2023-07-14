@@ -15,11 +15,9 @@ import java.util.Optional;
 @ApiResponses
 public class RestApiUserController {
     private final DataLoader loader;
-    //private final PersonDTO personDTO;
 
     public RestApiUserController(DataLoader loader) {
         this.loader = loader;
-      //  this.personDTO = new PersonDTO();
     }
 
     @GetMapping
