@@ -34,7 +34,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
 
-
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -69,8 +68,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         ApiError apiError = new ApiError("Internal Exception", ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
     @ExceptionHandler(NotValidIpnException.class)
-    protected ResponseEntity<Object> handleAllExceptions(NotValidIpnException ex){
+    protected ResponseEntity<Object> handleAllExceptions(NotValidIpnException ex) {
         ApiError apiError = new ApiError("Ipn is not valid", ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
     }

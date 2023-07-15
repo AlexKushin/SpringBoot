@@ -15,8 +15,9 @@ public class ApiError {
     private String debugMessage;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<String> errors;
-    public ApiError(String message, String debugMessage){
-        this.message=message;
-        this.debugMessage=debugMessage;
+
+    public ApiError(String message, String debugMessage) {
+        this.message = message;
+        this.debugMessage = debugMessage;
     }
 }
