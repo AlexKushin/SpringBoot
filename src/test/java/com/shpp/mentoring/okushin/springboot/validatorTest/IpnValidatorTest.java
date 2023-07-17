@@ -1,13 +1,13 @@
 package com.shpp.mentoring.okushin.springboot.validatorTest;
 
 import com.shpp.mentoring.okushin.springboot.validator.IpnValidator;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 @RunWith(SpringRunner.class)
 class IpnValidatorTest extends IpnValidator {
 
