@@ -3,12 +3,14 @@ package com.shpp.mentoring.okushin.springboot.validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 @Service
 @Slf4j
-public class IpnValidator {
+public class IpnValidator implements ConstraintValidator<IpnConstraint, String> {
 
 
     public boolean isValidIpn(String ipn) {
@@ -39,5 +41,15 @@ public class IpnValidator {
             log.info("Ipn was validated successfully");
             return true;
         }
+    }
+
+    @Override
+    public void initialize(IpnConstraint constraintAnnotation) {
+        ConstraintValidator.super.initialize(constraintAnnotation);
+    }
+
+    @Override
+    public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
+        return isValidIpn(s);
     }
 }
