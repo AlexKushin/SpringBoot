@@ -3,7 +3,6 @@ package com.shpp.mentoring.okushin.springboot.controller;
 import com.shpp.mentoring.okushin.springboot.model.PersonDTO;
 import com.shpp.mentoring.okushin.springboot.model.PersonEntity;
 import com.shpp.mentoring.okushin.springboot.service.DataLoader;
-import com.shpp.mentoring.okushin.springboot.validator.IpnConstraint;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +26,7 @@ public class RestApiUserController {
     }
 
     @GetMapping("/{ipn}")
-    Optional<PersonEntity> getUserByIpn(@PathVariable @IpnConstraint String ipn) {
+    Optional<PersonEntity> getUserByIpn(@PathVariable @Valid String ipn) {
         return loader.getUserByIpn(ipn);
     }
 
@@ -37,12 +36,12 @@ public class RestApiUserController {
     }
 
     @PutMapping("/{ipn}")
-    ResponseEntity<PersonDTO> putUser(@PathVariable @IpnConstraint String ipn, @RequestBody @Valid PersonDTO personDTO) {
+    ResponseEntity<PersonDTO> putUser(@PathVariable @Valid String ipn, @RequestBody @Valid PersonDTO personDTO) {
         return loader.putUser(ipn, personDTO);
     }
 
     @DeleteMapping("/{ipn}")
-    ResponseEntity<PersonEntity> deleteUser(@PathVariable @IpnConstraint String ipn) {
+    ResponseEntity<PersonEntity> deleteUser(@PathVariable @Valid String ipn) {
         return loader.deleteUser(ipn);
     }
 

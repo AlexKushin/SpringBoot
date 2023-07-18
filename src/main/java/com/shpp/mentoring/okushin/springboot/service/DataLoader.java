@@ -2,7 +2,6 @@ package com.shpp.mentoring.okushin.springboot.service;
 
 import com.shpp.mentoring.okushin.springboot.converter.PersonConverter;
 import com.shpp.mentoring.okushin.springboot.exceptions.EntityNotFoundException;
-import com.shpp.mentoring.okushin.springboot.exceptions.NotValidIpnException;
 import com.shpp.mentoring.okushin.springboot.exceptions.PersonAlreadyExistsException;
 import com.shpp.mentoring.okushin.springboot.model.PersonDTO;
 import com.shpp.mentoring.okushin.springboot.model.PersonEntity;

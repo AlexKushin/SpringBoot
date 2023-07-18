@@ -19,8 +19,8 @@ public class PersonDTO {
     @Pattern(regexp = "([0-9.]*)")
     @IpnConstraint
     private String ipn;
-    //@Pattern(regexp = ".*a.*")
+    @Pattern(regexp = "[a-zA-Z]+")
     private String firstName;
-    //@Pattern(regexp = ".*a.*")
+    @Pattern(regexp = "[a-zA-Z]+")
     private String lastName;
 }

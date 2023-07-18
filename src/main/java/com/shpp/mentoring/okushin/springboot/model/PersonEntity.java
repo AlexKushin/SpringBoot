@@ -23,8 +23,8 @@ public class PersonEntity {
     @IpnConstraint
     private String ipn;
 
-   // @Pattern(regexp = ".*a.*")
+    @Pattern(regexp = "[a-zA-Z]+")
     private String firstName;
-    //@Pattern(regexp = ".*a.*")
+    @Pattern(regexp = "[a-zA-Z]+")
     private String lastName;
 }
