@@ -14,7 +14,6 @@ class IpnValidatorTest extends IpnValidator {
 
     @ParameterizedTest
     @CsvSource({
-            "3419005370",
             "3419005370"
 
     })
