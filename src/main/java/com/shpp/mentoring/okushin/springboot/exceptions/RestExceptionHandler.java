@@ -26,6 +26,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(PersonAlreadyExistsException.class)
+    protected ResponseEntity<Object> handlePersonAlreadyExistsEx(PersonAlreadyExistsException ex) {
+        ApiError apiError = new ApiError("Person Already Exists Exception", ex.getMessage());
+        return new ResponseEntity<>(apiError, HttpStatus.FORBIDDEN);
+    }
+
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {

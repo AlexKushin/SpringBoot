@@ -2,6 +2,8 @@ package com.shpp.mentoring.okushin.springboot.service;
 
 import com.shpp.mentoring.okushin.springboot.converter.PersonConverter;
 import com.shpp.mentoring.okushin.springboot.exceptions.EntityNotFoundException;
+import com.shpp.mentoring.okushin.springboot.exceptions.NotValidIpnException;
+import com.shpp.mentoring.okushin.springboot.exceptions.PersonAlreadyExistsException;
 import com.shpp.mentoring.okushin.springboot.model.PersonDTO;
 import com.shpp.mentoring.okushin.springboot.model.PersonEntity;
 import com.shpp.mentoring.okushin.springboot.repository.PersonRepository;
@@ -14,7 +16,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-//@Transactional(noRollbackFor = { Exception.class })
+
 public class DataLoader {
     private final PersonRepository personRepository;
 
@@ -42,11 +44,19 @@ public class DataLoader {
     }
 
     public ResponseEntity<PersonDTO> postUser(PersonDTO personDTO) {
-        PersonEntity person = customerConverter.convertDtoToEntity(personDTO);
-        personRepository.save(person);
-        log.info("new Person was written to repository. Person: first name = {}, last name = {}, ipn = {}",
-                person.getFirstName(), person.getLastName(), person.getIpn());
-        return new ResponseEntity<>(personDTO, HttpStatus.CREATED);
+        Optional<PersonEntity> personInRepo = personRepository.findById(personDTO.getIpn());
+        if (personInRepo.isEmpty()) {
+            PersonEntity person = customerConverter.convertDtoToEntity(personDTO);
+            personRepository.save(person);
+            log.info("new Person was written to repository. Person: first name = {}, last name = {}, ipn = {}",
+                    person.getFirstName(), person.getLastName(), person.getIpn());
+            return new ResponseEntity<>(personDTO, HttpStatus.CREATED);
+        }
+        log.info("Person assigned with ipn = {} has already existed in repository. " +
+                        "Person: first name = {}, last name = {}, ipn = {}",
+                personDTO.getIpn(), personDTO.getFirstName(), personDTO.getLastName(), personDTO.getIpn());
+        throw new PersonAlreadyExistsException(personDTO.getIpn());
+
     }
 
     public ResponseEntity<PersonDTO> putUser(String ipn, PersonDTO personDTO) {
@@ -70,6 +80,6 @@ public class DataLoader {
         log.info("Try to delete Person by ipn {} from repository", ipn);
         personRepository.deleteById(ipn);
         log.info("Person assigned by ipn {} was deleted from repository", ipn);
-        return new ResponseEntity<>(person.get(), HttpStatus.OK); //202 204
+        return new ResponseEntity<>(person.get(), HttpStatus.OK);
     }
 }
