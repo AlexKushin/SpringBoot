@@ -49,8 +49,8 @@ class RestApiUserControllerTest {
     void testGet() throws Exception {
         PersonEntity p1 = new PersonEntity("3419005370", "Jack", "London");
         PersonEntity p2 = new PersonEntity("0000000002", "Paul", "Silver");
-
-        given(dataLoader.getUsers()).willReturn(List.of(p1, p2));
+        ResponseEntity<Iterable<PersonEntity>> personList = new ResponseEntity<>(List.of(p1, p2), HttpStatus.OK);
+        given(dataLoader.getUsers()).willReturn(personList);
 
         mvc.perform(get("/persons").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

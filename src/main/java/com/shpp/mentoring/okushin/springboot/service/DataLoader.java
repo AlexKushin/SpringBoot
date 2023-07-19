@@ -27,15 +27,17 @@ public class DataLoader {
         log.info("Data loader was created");
     }
 
-    public Iterable<PersonEntity> getUsers() {
+    public ResponseEntity<Iterable<PersonEntity>> getUsers() {
         log.info("List of Persons is returned");
-        //якщо пусто то 204
-        return personRepository.findAll();
+        Iterable<PersonEntity> personEntitiesList = personRepository.findAll();
+        if(personEntitiesList.iterator().hasNext()){
+            return new ResponseEntity<>(personEntitiesList, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(personEntitiesList, HttpStatus.NO_CONTENT);
     }
 
     public Optional<PersonEntity> getUserByIpn(String ipn) {
-        Optional<PersonEntity> person = personRepository.findById(ipn);
-        if (person.isEmpty()) {
+        if (!personRepository.existsById(ipn)) {
             log.error("No any Person by assigned ipn = {}", ipn);
             throw new EntityNotFoundException(ipn);
         }
@@ -43,8 +45,7 @@ public class DataLoader {
     }
 
     public ResponseEntity<PersonDTO> postUser(PersonDTO personDTO) {
-        Optional<PersonEntity> personInRepo = personRepository.findById(personDTO.getIpn());
-        if (personInRepo.isEmpty()) {
+        if (!personRepository.existsById(personDTO.getIpn())) {
             PersonEntity person = customerConverter.convertDtoToEntity(personDTO);
             personRepository.save(person);
             log.info("new Person was written to repository. Person: first name = {}, last name = {}, ipn = {}",

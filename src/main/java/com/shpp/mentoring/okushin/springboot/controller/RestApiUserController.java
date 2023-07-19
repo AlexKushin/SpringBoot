@@ -21,7 +21,7 @@ public class RestApiUserController {
     }
 
     @GetMapping
-    Iterable<PersonEntity> get() {
+    ResponseEntity<Iterable<PersonEntity>> get() {
         return loader.getUsers();
     }
 
