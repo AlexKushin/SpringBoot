@@ -21,7 +21,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -47,9 +46,9 @@ class RestApiUserControllerTest {
 
     @Test
     void testGet() throws Exception {
-        PersonEntity p1 = new PersonEntity("3419005370", "Jack", "London");
-        PersonEntity p2 = new PersonEntity("0000000002", "Paul", "Silver");
-        ResponseEntity<Iterable<PersonEntity>> personList = new ResponseEntity<>(List.of(p1, p2), HttpStatus.OK);
+        PersonDTO p1 = new PersonDTO("3419005370", "Jack", "London");
+        PersonDTO p2 = new PersonDTO("0000000002", "Paul", "Silver");
+        ResponseEntity<Iterable<PersonDTO>> personList = new ResponseEntity<>(List.of(p1, p2), HttpStatus.OK);
         given(dataLoader.getUsers()).willReturn(personList);
 
         mvc.perform(get("/persons").contentType(MediaType.APPLICATION_JSON))
@@ -70,8 +69,8 @@ class RestApiUserControllerTest {
     void testGetUserByIpn() throws Exception {
 
         PersonDTO alex = new PersonDTO("3419005730", "Alex", "Kushyn");
-        PersonConverter converter = new PersonConverter();
-        given(dataLoader.getUserByIpn("3419005730")).willReturn(Optional.ofNullable(converter.convertDtoToEntity(alex)));
+       // PersonConverter converter = new PersonConverter();
+        given(dataLoader.getUserByIpn("3419005730")).willReturn(alex);
 
         mvc.perform(get("/persons/3419005730").contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.toJson(alex)))
@@ -84,20 +83,20 @@ class RestApiUserControllerTest {
 
    @Test
     void testPostUser() throws Exception {
-        PersonEntity alex = new PersonEntity("3419005370", "Alex", "Kushyn");
-        PersonDTO alexDTO = converter.convertEntityToDto(alex);
+        PersonDTO alexDTO = new PersonDTO("3419005370", "Alex", "Kushyn");
+        PersonEntity alexEntity = converter.convertDtoToEntity(alexDTO);
         ResponseEntity<PersonDTO> alexRE = new ResponseEntity<>(alexDTO, HttpStatus.CREATED);
 
-        given(repository.save(alex)).willReturn(alex);
+        given(repository.save(alexEntity)).willReturn(alexEntity);
         given(dataLoader.postUser(alexDTO)).willReturn(alexRE);
-        given(dataLoader.getUserByIpn("3419005370")).willReturn(Optional.of(alex));
+        given(dataLoader.getUserByIpn("3419005370")).willReturn(alexDTO);
 
         mvc.perform(post("/persons").contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.toJson(alex)))
-                .andExpect(status().isOk());
+                        .content(JsonUtil.toJson(alexDTO)))
+                .andExpect(status().is2xxSuccessful());
 
         mvc.perform(get("/persons/3419005370").contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.toJson(alex)))
+                        .content(JsonUtil.toJson(alexDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value("Alex"))
                 .andExpect(jsonPath("$.lastName").value("Kushyn"))
@@ -112,19 +111,20 @@ class RestApiUserControllerTest {
 
     @Test
     void testPutUser() throws Exception {
-        PersonEntity alex = new PersonEntity("3419005370", "Alex", "Kushyn");
-        PersonDTO alexDTO = converter.convertEntityToDto(alex);
+        PersonDTO alexDTO = new PersonDTO("3419005370", "Alex", "Kushyn");
+        PersonEntity alexEntity = converter.convertDtoToEntity(alexDTO);
         ResponseEntity<PersonDTO> alexRE = new ResponseEntity<>(alexDTO, HttpStatus.CREATED);
-        given(repository.save(alex)).willReturn(alex);
-        given(dataLoader.putUser("3419005370", alexDTO)).willReturn(alexRE);
-        given(dataLoader.getUserByIpn("3419005370")).willReturn(Optional.of(alex));
+
+        given(repository.save(alexEntity)).willReturn(alexEntity);
+        given(dataLoader.postUser(alexDTO)).willReturn(alexRE);
+        given(dataLoader.getUserByIpn("3419005370")).willReturn(alexDTO);
 
         mvc.perform(put("/persons/3419005370").contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.toJson(alex)))
+                        .content(JsonUtil.toJson(alexDTO)))
                 .andExpect(status().isOk());
 
         mvc.perform(get("/persons/3419005370").contentType(MediaType.APPLICATION_JSON)
-                        .content(JsonUtil.toJson(alex)))
+                        .content(JsonUtil.toJson(alexDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value("Alex"))
                 .andExpect(jsonPath("$.lastName").value("Kushyn"))
@@ -143,6 +143,4 @@ class RestApiUserControllerTest {
         verify(dataLoader, VerificationModeFactory.times(1)).deleteUser(Mockito.any());
 
     }
-
-
 }

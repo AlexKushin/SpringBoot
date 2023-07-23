@@ -1,14 +1,12 @@
 package com.shpp.mentoring.okushin.springboot.controller;
 
 import com.shpp.mentoring.okushin.springboot.model.PersonDTO;
-import com.shpp.mentoring.okushin.springboot.model.PersonEntity;
 import com.shpp.mentoring.okushin.springboot.service.DataLoader;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/persons")
@@ -21,12 +19,12 @@ public class RestApiUserController {
     }
 
     @GetMapping
-    ResponseEntity<Iterable<PersonEntity>> get() {
+    ResponseEntity<Iterable<PersonDTO>> get() {
         return loader.getUsers();
     }
 
     @GetMapping("/{ipn}")
-    Optional<PersonEntity> getUserByIpn(@PathVariable @Valid String ipn) {
+    PersonDTO getUserByIpn(@PathVariable @Valid String ipn) {
         return loader.getUserByIpn(ipn);
     }
 
@@ -41,7 +39,7 @@ public class RestApiUserController {
     }
 
     @DeleteMapping("/{ipn}")
-    ResponseEntity<PersonEntity> deleteUser(@PathVariable @Valid String ipn) {
+    ResponseEntity<PersonDTO> deleteUser(@PathVariable @Valid String ipn) {
         return loader.deleteUser(ipn);
     }
 
