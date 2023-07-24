@@ -1,5 +1,6 @@
 package com.shpp.mentoring.okushin.springboot.exceptions;
 
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +21,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 @RestControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({EntityNotFoundException.class, javax.persistence.EntityNotFoundException.class})
-    protected ResponseEntity<Object> handleEntityNotFoundEx(EntityNotFoundException ex) {
-        ApiError apiError = new ApiError("Entity Not Found Exception", ex.getMessage());
-        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
-    }
 
-    @ExceptionHandler(PersonAlreadyExistsException.class)
-    protected ResponseEntity<Object> handlePersonAlreadyExistsEx(PersonAlreadyExistsException ex) {
-        ApiError apiError = new ApiError("Person Already Exists Exception", ex.getMessage());
-        return new ResponseEntity<>(apiError, HttpStatus.FORBIDDEN);
-    }
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
@@ -46,7 +37,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         List<String> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(x -> x.getDefaultMessage())
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
 
         ApiError apiError = new ApiError("Method Argument Not Valid", ex.getMessage(), errors);
@@ -79,6 +70,17 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleAllExceptions(NotValidIpnException ex) {
         ApiError apiError = new ApiError("Ipn is not valid", ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler({EntityNotFoundException.class, javax.persistence.EntityNotFoundException.class})
+    protected ResponseEntity<Object> handleEntityNotFoundEx(EntityNotFoundException ex) {
+        ApiError apiError = new ApiError("Entity Not Found Exception", ex.getMessage());
+        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(PersonAlreadyExistsException.class)
+    protected ResponseEntity<Object> handlePersonAlreadyExistsEx(PersonAlreadyExistsException ex) {
+        ApiError apiError = new ApiError("Person Already Exists Exception", ex.getMessage());
+        return new ResponseEntity<>(apiError, HttpStatus.FORBIDDEN);
     }
 
 }

@@ -3,6 +3,7 @@ package com.shpp.mentoring.okushin.springboot.controller;
 import com.shpp.mentoring.okushin.springboot.model.PersonDTO;
 import com.shpp.mentoring.okushin.springboot.service.DataLoader;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,17 +21,17 @@ public class RestApiUserController {
 
     @GetMapping
     ResponseEntity<Iterable<PersonDTO>> get() {
-        return loader.getUsers();
+        return new ResponseEntity<>(loader.getUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/{ipn}")
-    PersonDTO getUserByIpn(@PathVariable @Valid String ipn) {
-        return loader.getUserByIpn(ipn);
+    ResponseEntity<PersonDTO> getUserByIpn(@PathVariable @Valid String ipn) {
+        return new ResponseEntity<>(loader.getUserByIpn(ipn), HttpStatus.OK);
     }
 
     @PostMapping
     ResponseEntity<PersonDTO> postUser(@RequestBody @Valid PersonDTO personDTO) {
-        return loader.postUser(personDTO);
+        return new ResponseEntity<>(loader.postUser(personDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("/{ipn}")
@@ -40,7 +41,7 @@ public class RestApiUserController {
 
     @DeleteMapping("/{ipn}")
     ResponseEntity<PersonDTO> deleteUser(@PathVariable @Valid String ipn) {
-        return loader.deleteUser(ipn);
+        return new ResponseEntity<>(loader.deleteUser(ipn), HttpStatus.OK);
     }
 
 }

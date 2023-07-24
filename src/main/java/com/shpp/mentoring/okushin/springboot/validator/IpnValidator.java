@@ -8,7 +8,7 @@ import javax.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-@Service
+
 @Slf4j
 public class IpnValidator implements ConstraintValidator<IpnConstraint, String> {
 

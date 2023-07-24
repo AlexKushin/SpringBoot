@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -48,7 +47,7 @@ class RestApiUserControllerTest {
     void testGet() throws Exception {
         PersonDTO p1 = new PersonDTO("3419005370", "Jack", "London");
         PersonDTO p2 = new PersonDTO("0000000002", "Paul", "Silver");
-        ResponseEntity<Iterable<PersonDTO>> personList = new ResponseEntity<>(List.of(p1, p2), HttpStatus.OK);
+        Iterable<PersonDTO> personList = List.of(p1, p2);
         given(dataLoader.getUsers()).willReturn(personList);
 
         mvc.perform(get("/persons").contentType(MediaType.APPLICATION_JSON))
@@ -84,11 +83,11 @@ class RestApiUserControllerTest {
    @Test
     void testPostUser() throws Exception {
         PersonDTO alexDTO = new PersonDTO("3419005370", "Alex", "Kushyn");
-        PersonEntity alexEntity = converter.convertDtoToEntity(alexDTO);
-        ResponseEntity<PersonDTO> alexRE = new ResponseEntity<>(alexDTO, HttpStatus.CREATED);
+        PersonEntity alexEntity = PersonConverter.convertDtoToEntity(alexDTO);
+       // ResponseEntity<PersonDTO> alexRE = new ResponseEntity<>(alexDTO, HttpStatus.CREATED);
 
         given(repository.save(alexEntity)).willReturn(alexEntity);
-        given(dataLoader.postUser(alexDTO)).willReturn(alexRE);
+        given(dataLoader.postUser(alexDTO)).willReturn(alexDTO);
         given(dataLoader.getUserByIpn("3419005370")).willReturn(alexDTO);
 
         mvc.perform(post("/persons").contentType(MediaType.APPLICATION_JSON)
@@ -112,11 +111,11 @@ class RestApiUserControllerTest {
     @Test
     void testPutUser() throws Exception {
         PersonDTO alexDTO = new PersonDTO("3419005370", "Alex", "Kushyn");
-        PersonEntity alexEntity = converter.convertDtoToEntity(alexDTO);
-        ResponseEntity<PersonDTO> alexRE = new ResponseEntity<>(alexDTO, HttpStatus.CREATED);
+        PersonEntity alexEntity = PersonConverter.convertDtoToEntity(alexDTO);
+       // ResponseEntity<PersonDTO> alexRE = new ResponseEntity<>(alexDTO, HttpStatus.CREATED);
 
         given(repository.save(alexEntity)).willReturn(alexEntity);
-        given(dataLoader.postUser(alexDTO)).willReturn(alexRE);
+        given(dataLoader.postUser(alexDTO)).willReturn(alexDTO);
         given(dataLoader.getUserByIpn("3419005370")).willReturn(alexDTO);
 
         mvc.perform(put("/persons/3419005370").contentType(MediaType.APPLICATION_JSON)
